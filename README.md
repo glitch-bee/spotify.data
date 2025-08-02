@@ -1,6 +1,6 @@
-# Spotify Data Analysis 🎵
+# Spotify Data Analysis 
 
-A comprehensive toolkit for analyzing your personal Spotify listening history to discover music trends, habits, and preferences over time.
+A toolkit for analyzing your personal Spotify listening history to discover music trends, habits, and preferences over time.
 
 ## Overview
 
