@@ -23,10 +23,10 @@ if not CLIENT_ID or not CLIENT_SECRET:
     raise ValueError("Please set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in your .env file")
 
 # Configuration
-BATCH_SIZE = 100  # Process tracks in batches
+BATCH_SIZE = 50   # Smaller batches to be more conservative
 PROGRESS_FILE = "metadata_progress.pkl"  # Save progress between runs
-DELAY_BETWEEN_REQUESTS = 0.2  # Seconds between API calls
-DELAY_BETWEEN_BATCHES = 5  # Seconds between batches to be extra nice to the API
+DELAY_BETWEEN_REQUESTS = 0.5  # Longer delay between API calls
+DELAY_BETWEEN_BATCHES = 10  # Longer rest between batches
 
 # Set up Spotipy auth
 auth_manager = SpotifyClientCredentials(
@@ -59,12 +59,34 @@ def search_track_metadata(track_name, artist_name):
             
         track_id = items[0]["id"]
         
-        # Get audio features
-        features = sp.audio_features([track_id])[0]
+        # Get audio features with rate limit handling
+        try:
+            features = sp.audio_features([track_id])[0]
+        except Exception as e:
+            if "403" in str(e) or "rate limit" in str(e).lower():
+                logger.warning(f"Rate limit hit for audio features. Waiting 60 seconds...")
+                time.sleep(60)
+                try:
+                    features = sp.audio_features([track_id])[0]
+                except:
+                    features = None
+            else:
+                features = None
         
-        # Get genres from artist
-        artist_id = items[0]["artists"][0]["id"]
-        artist_data = sp.artist(artist_id)
+        # Get genres from artist with rate limit handling
+        try:
+            artist_id = items[0]["artists"][0]["id"]
+            artist_data = sp.artist(artist_id)
+        except Exception as e:
+            if "403" in str(e) or "rate limit" in str(e).lower():
+                logger.warning(f"Rate limit hit for artist data. Waiting 60 seconds...")
+                time.sleep(60)
+                try:
+                    artist_data = sp.artist(artist_id)
+                except:
+                    artist_data = None
+            else:
+                artist_data = None
         
         metadata = {
             "spotify_id": track_id,
@@ -83,8 +105,12 @@ def search_track_metadata(track_name, artist_name):
         return metadata
         
     except Exception as e:
-        logger.warning(f"Error fetching {track_name} by {artist_name}: {e}")
-        return None
+        if "403" in str(e) or "rate limit" in str(e).lower():
+            logger.error(f"Rate limit exceeded. You may need to wait longer before retrying.")
+            raise e
+        else:
+            logger.warning(f"Error fetching {track_name} by {artist_name}: {e}")
+            return None
 
 def process_batch(tracks_batch, processed_tracks):
     """Process a batch of tracks"""

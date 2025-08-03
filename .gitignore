@@ -4,6 +4,7 @@
 *.png
 *.json
 docs/
+.spotify_cache
 enriched_streaming_history.csv
 combined_streaming_history.csv
 cleaned_streaming_history.csv
@@ -12,3 +13,4 @@ spotify_analysis.png
 generate_initial_analysis.py
 initial-analysis.md 
 .cache
+test_spotify_api.py
