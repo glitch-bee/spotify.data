@@ -9,3 +9,6 @@ combined_streaming_history.csv
 cleaned_streaming_history.csv
 metadata_progress.pkl
 spotify_analysis.png
+generate_initial_analysis.py
+initial-analysis.md 
+.cache
