@@ -1,0 +1,7 @@
+pandas
+spotipy
+tqdm
+python-dotenv
+kagglehub
+matplotlib
+seaborn
