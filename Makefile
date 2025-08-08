@@ -1,7 +1,7 @@
 # Convenience Makefile
 PY?=$(shell [ -x .venv/bin/python ] && echo .venv/bin/python || which python3)
 
-.PHONY: all setup combine clean kaggle api merge coverage orchestrate
+.PHONY: all setup combine clean kaggle api merge coverage orchestrate app
 
 all: orchestrate
 
@@ -30,3 +30,6 @@ coverage:
 
 orchestrate:
 	$(PY) scripts/orchestrate.py --all
+
+app:
+	streamlit run scripts/app/streamlit_app.py
