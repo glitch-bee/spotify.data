@@ -1,0 +1,4 @@
+/home/usher/Documents/code/spotify-data/scripts/enrichment/merge_enrichments.py:29: DtypeWarning: Columns (9,10,11,12,13,14,15,20) have mixed types. Specify dtype option on import or set low_memory=False.
+  base = pd.read_csv(BASE)
+/home/usher/Documents/code/spotify-data/scripts/enrichment/merge_enrichments.py:35: DtypeWarning: Columns (9,10,11,12,13,14,15,20) have mixed types. Specify dtype option on import or set low_memory=False.
+  k = pd.read_csv(KAGGLE)

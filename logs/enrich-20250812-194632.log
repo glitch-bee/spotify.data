@@ -1,0 +1,13 @@
+nohup: ignoring input
+2025-08-12 19:46:32,915 - INFO - Starting smart Spotify API metadata enrichment (memory-safe)
+2025-08-12 19:46:32,915 - INFO - User authentication requires interaction with your web browser. Once you enter your credentials and give authorization, you will be redirected to a url.  Paste that url you were directed to to complete the authorization.
+2025-08-12 19:46:33,292 - INFO - Opened https://accounts.spotify.com/authorize?client_id=97ee1ecd593a4158b248c00dcbb7e7e0&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8888%2Fcallback&scope=user-library-read in your browser
+2025-08-12 19:46:33,728 - INFO - Authenticated as: Focuszero (focuszero)
+2025-08-12 19:46:33,868 - INFO - Base unique tracks: shape=(27400, 2), mem≈157.6MB
+2025-08-12 19:46:33,879 - INFO - Loading existing enrichment keys (external dataset)...
+2025-08-12 19:46:34,045 - INFO - Loaded 27265 external-enriched unique keys
+2025-08-12 19:46:34,052 - INFO - After skip filters: to_process=0 (skipped external=27265, already_api=0)
+2025-08-12 19:46:34,052 - INFO - Nothing to process. Proceeding to DuckDB merge with existing metadata CSV (if any)...
+Batches: 0it [00:00, ?it/s]Batches: 0it [00:00, ?it/s]
+2025-08-12 19:46:34,055 - INFO - Running DuckDB merge (left join) to produce final enriched CSV…
+2025-08-12 19:46:34,260 - INFO - DuckDB merge complete: final_rows=138761, meta_rows=9750, output='/home/usher/Documents/code/spotify-data/scripts/spotify_api/data/enriched/spotify_api_enriched_streaming_history.csv'
