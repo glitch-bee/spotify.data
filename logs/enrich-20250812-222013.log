@@ -1,0 +1,10 @@
+2025-08-12 22:20:13,605 - INFO - Starting smart Spotify API metadata enrichment (memory-safe)
+2025-08-12 22:20:13,882 - INFO - Authenticated as: Focuszero (focuszero)
+2025-08-12 22:20:14,000 - INFO - Base unique tracks: shape=(27400, 2), mem≈159.3MB
+2025-08-12 22:20:14,011 - INFO - Loading existing enrichment keys (external dataset)...
+2025-08-12 22:20:14,153 - INFO - Loaded 27265 external-enriched unique keys
+2025-08-12 22:20:14,159 - INFO - After skip filters: to_process=0 (skipped external=27265, already_api=0)
+2025-08-12 22:20:14,159 - INFO - Nothing to process. Proceeding to DuckDB merge with existing metadata CSV (if any)...
+2025-08-12 22:20:14,160 - INFO - Running DuckDB merge (left join) to produce final enriched CSV…
+2025-08-12 22:20:14,301 - INFO - Meta duplicates dropped=46
+2025-08-12 22:20:14,375 - INFO - DuckDB merge complete: final_rows=138761, meta_rows=9750, output='/home/usher/Documents/code/spotify-data/scripts/spotify_api/data/enriched/spotify_api_enriched_streaming_history.csv'

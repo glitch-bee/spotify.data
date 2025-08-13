@@ -1,0 +1,18 @@
+2025-08-12 22:21:21,385 - INFO - Starting smart Spotify API metadata enrichment (memory-safe)
+2025-08-12 22:21:21,513 - INFO - Authenticated as: Focuszero (focuszero)
+2025-08-12 22:21:21,634 - INFO - Base unique tracks: shape=(27400, 2), mem≈158.4MB
+2025-08-12 22:21:21,645 - INFO - Loading existing enrichment keys (external dataset) with Kaggle-match signal…
+2025-08-12 22:21:21,791 - INFO - Loaded 6069 external-enriched unique keys (Kaggle-matched)
+2025-08-12 22:21:21,795 - INFO - After skip filters: to_process=21270 (skipped external=6069, already_api=0)
+2025-08-12 22:21:21,797 - INFO - Batch 1: size=50 mem≈172.4MB
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/usher/Documents/code/spotify-data/scripts/spotify_api/smart_metadata_enrichment.py", line 455, in <module>
+    main(merge_only=args.merge_only)
+  File "/home/usher/Documents/code/spotify-data/scripts/spotify_api/smart_metadata_enrichment.py", line 415, in main
+    inserted = upsert_progress(batch_completed)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/usher/Documents/code/spotify-data/scripts/spotify_api/smart_metadata_enrichment.py", line 162, in upsert_progress
+    cur.execute(
+sqlite3.OperationalError: table progress has no column named updated_at

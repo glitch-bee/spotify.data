@@ -133,6 +133,7 @@ def read_csv_robust(path: Path, **kwargs):
 def init_progress_db() -> None:
     ensure_dirs()
     with sqlite3.connect(PROGRESS_DB) as con:
+        # Ensure table exists with current schema
         con.execute(
             """
             CREATE TABLE IF NOT EXISTS progress (
@@ -142,6 +143,14 @@ def init_progress_db() -> None:
             )
             """
         )
+        # Migrate older schemas by adding missing columns
+        cols = {row[1] for row in con.execute("PRAGMA table_info(progress)").fetchall()}
+        if "meta_json" not in cols:
+            con.execute("ALTER TABLE progress ADD COLUMN meta_json TEXT")
+        if "updated_at" not in cols:
+            con.execute(
+                "ALTER TABLE progress ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+            )
 
 
 def load_completed_keys() -> Set[str]:
@@ -173,19 +182,53 @@ def upsert_progress(batch_key_to_meta: Dict[str, Dict]) -> int:
 # ---------------------------------------------------------------------------
 
 def load_existing_enrichment() -> Set[str]:
+    """Return keys that are already enriched by the external (Kaggle) dataset.
+
+    IMPORTANT: Only consider rows that look actually enriched (e.g., have a Kaggle
+    track_id or popularity). The external CSV mirrors the full play history; if we
+    don't filter, we'd skip almost everything erroneously.
+    """
     enriched: Set[str] = set()
     if not ULTIMATE_ENRICHED_CSV.exists():
         return enriched
-    logger.info("Loading existing enrichment keys (external dataset)...")
+    logger.info("Loading existing enrichment keys (external dataset) with Kaggle-match signal…")
+
+    # Prefer 'track_id' as a strong Kaggle match signal; fallback to 'popularity'.
+    wanted_cols = [
+        "master_metadata_track_name",
+        "master_metadata_album_artist_name",
+        "track_id",
+        "popularity",
+    ]
+
+    # Read in chunks to avoid memory spikes
     for chunk in read_csv_robust(
         ULTIMATE_ENRICHED_CSV,
-        usecols=["master_metadata_track_name", "master_metadata_album_artist_name"],
+        usecols=lambda c: c in wanted_cols,  # guard if some columns are absent
         chunksize=100_000,
     ):
-        chunk = chunk.dropna(subset=["master_metadata_track_name", "master_metadata_album_artist_name"])
-        for t, a in zip(chunk["master_metadata_track_name"], chunk["master_metadata_album_artist_name"]):
+        # Ensure baseline columns exist
+        if not {"master_metadata_track_name", "master_metadata_album_artist_name"}.issubset(chunk.columns):
+            continue
+
+        # Determine enriched rows: track_id present (preferred), else popularity present
+        has_track_id = "track_id" in chunk.columns
+        has_popularity = "popularity" in chunk.columns
+
+        if has_track_id:
+            mask = chunk["track_id"].notna() & (chunk["track_id"].astype(str).str.strip() != "")
+        elif has_popularity:
+            mask = chunk["popularity"].notna()
+        else:
+            # If no signal columns are present in this chunk, skip it (be conservative)
+            continue
+
+        sub = chunk.loc[mask, ["master_metadata_track_name", "master_metadata_album_artist_name"]]
+        sub = sub.dropna()
+        for t, a in zip(sub["master_metadata_track_name"], sub["master_metadata_album_artist_name"]):
             enriched.add(make_key(t, a))
-    logger.info(f"Loaded {len(enriched)} external-enriched unique keys")
+
+    logger.info(f"Loaded {len(enriched)} external-enriched unique keys (Kaggle-matched)")
     return enriched
 
 

@@ -29,12 +29,30 @@ def run_duckdb_merge(base_csv: Path, meta_csv: Path, out_csv: Path):
     base AS (
         SELECT *, lower(trim(master_metadata_track_name)) AS tkey,
                    lower(trim(master_metadata_album_artist_name)) AS akey
-        FROM read_csv_auto('{base_csv.as_posix()}', ALL_VARCHAR=TRUE, filename=true)
+        FROM read_csv_auto(
+            '{base_csv.as_posix()}',
+            ALL_VARCHAR=TRUE,
+            filename=true,
+            sample_size=-1,
+            strict_mode=false,
+            ignore_errors=false,
+            parallel=false,
+            allow_quoted_nulls=true
+        )
     ),
     meta_raw AS (
         SELECT *, lower(trim(master_metadata_track_name)) AS tkey,
                    lower(trim(master_metadata_album_artist_name)) AS akey
-        FROM read_csv_auto('{meta_csv.as_posix()}', ALL_VARCHAR=TRUE, filename=true)
+        FROM read_csv_auto(
+            '{meta_csv.as_posix()}',
+            ALL_VARCHAR=TRUE,
+            filename=true,
+            sample_size=-1,
+            strict_mode=false,
+            ignore_errors=true,
+            parallel=false,
+            allow_quoted_nulls=true
+        )
     ),
     meta_dedup AS (
         SELECT * EXCLUDE rn FROM (
@@ -59,7 +77,7 @@ def run_duckdb_merge(base_csv: Path, meta_csv: Path, out_csv: Path):
         WITH meta_raw AS (
             SELECT lower(trim(master_metadata_track_name)) AS tkey,
                    lower(trim(master_metadata_album_artist_name)) AS akey
-            FROM read_csv_auto(?, ALL_VARCHAR=TRUE)
+            FROM read_csv_auto(?, ALL_VARCHAR=TRUE, sample_size=-1, strict_mode=false, ignore_errors=true, parallel=false, allow_quoted_nulls=true)
         )
         SELECT COUNT(*) FROM (
             SELECT tkey, akey, COUNT(*) c FROM meta_raw GROUP BY tkey, akey HAVING c > 1
@@ -71,10 +89,11 @@ def run_duckdb_merge(base_csv: Path, meta_csv: Path, out_csv: Path):
         logger.info(f"Meta duplicates dropped={dupes}")
 
     meta_count = con.execute(
-        "SELECT COUNT(*) FROM read_csv_auto(?, ALL_VARCHAR=TRUE)", [meta_csv.as_posix()]
+        "SELECT COUNT(*) FROM read_csv_auto(?, ALL_VARCHAR=TRUE, sample_size=-1, strict_mode=false, ignore_errors=true, parallel=false, allow_quoted_nulls=true)",
+        [meta_csv.as_posix()],
     ).fetchone()[0]
     rows_count = con.execute(
-        "SELECT COUNT(*) FROM read_csv_auto(?, ALL_VARCHAR=TRUE)", [out_csv.as_posix()]
+        "SELECT COUNT(*) FROM read_csv_auto(?, ALL_VARCHAR=TRUE, sample_size=-1)", [out_csv.as_posix()]
     ).fetchone()[0]
     con.close()
     return rows_count, meta_count

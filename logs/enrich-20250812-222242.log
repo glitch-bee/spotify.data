@@ -1,0 +1,69 @@
+2025-08-12 22:22:43,082 - INFO - Starting smart Spotify API metadata enrichment (memory-safe)
+2025-08-12 22:22:43,208 - INFO - Authenticated as: Focuszero (focuszero)
+2025-08-12 22:22:43,326 - INFO - Base unique tracks: shape=(27400, 2), mem≈159.8MB
+2025-08-12 22:22:43,336 - INFO - Loading existing enrichment keys (external dataset) with Kaggle-match signal…
+2025-08-12 22:22:43,483 - INFO - Loaded 6069 external-enriched unique keys (Kaggle-matched)
+2025-08-12 22:22:43,489 - INFO - After skip filters: to_process=21270 (skipped external=6069, already_api=0)
+2025-08-12 22:22:43,491 - INFO - Batch 1: size=50 mem≈174.0MB
+2025-08-12 22:23:11,162 - INFO - batch_stats processed=43 skipped=7 api_hits=50 sqlite_upserts=43 total_attempted=50 total_success=43
+2025-08-12 22:23:11,186 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:23:16,187 - INFO - Batch 2: size=50 mem≈174.0MB
+2025-08-12 22:23:43,919 - INFO - batch_stats processed=42 skipped=8 api_hits=50 sqlite_upserts=42 total_attempted=100 total_success=85
+2025-08-12 22:23:43,943 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:23:48,944 - INFO - Batch 3: size=50 mem≈174.0MB
+2025-08-12 22:24:17,259 - INFO - batch_stats processed=47 skipped=3 api_hits=50 sqlite_upserts=47 total_attempted=150 total_success=132
+2025-08-12 22:24:17,276 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:24:22,277 - INFO - Batch 4: size=50 mem≈174.0MB
+2025-08-12 22:24:50,743 - INFO - batch_stats processed=47 skipped=3 api_hits=50 sqlite_upserts=47 total_attempted=200 total_success=179
+2025-08-12 22:24:50,763 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:24:55,764 - INFO - Batch 5: size=50 mem≈174.0MB
+2025-08-12 22:25:23,834 - INFO - batch_stats processed=45 skipped=5 api_hits=50 sqlite_upserts=45 total_attempted=250 total_success=224
+2025-08-12 22:25:23,854 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:25:28,854 - INFO - Batch 6: size=50 mem≈174.0MB
+2025-08-12 22:25:57,509 - INFO - batch_stats processed=48 skipped=2 api_hits=50 sqlite_upserts=48 total_attempted=300 total_success=272
+2025-08-12 22:25:57,531 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:26:02,532 - INFO - Batch 7: size=50 mem≈174.0MB
+2025-08-12 22:26:30,858 - INFO - batch_stats processed=45 skipped=5 api_hits=50 sqlite_upserts=45 total_attempted=350 total_success=317
+2025-08-12 22:26:30,877 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:26:35,877 - INFO - Batch 8: size=50 mem≈174.0MB
+2025-08-12 22:27:04,685 - INFO - batch_stats processed=48 skipped=2 api_hits=50 sqlite_upserts=48 total_attempted=400 total_success=365
+2025-08-12 22:27:04,694 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:27:09,694 - INFO - Batch 9: size=50 mem≈174.0MB
+2025-08-12 22:27:38,274 - INFO - batch_stats processed=45 skipped=5 api_hits=50 sqlite_upserts=45 total_attempted=450 total_success=410
+2025-08-12 22:27:38,293 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:27:43,294 - INFO - Batch 10: size=50 mem≈174.0MB
+2025-08-12 22:28:11,940 - INFO - batch_stats processed=47 skipped=3 api_hits=50 sqlite_upserts=47 total_attempted=500 total_success=457
+2025-08-12 22:28:11,955 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:28:16,956 - INFO - Summary: batches_done=10 total_attempted=500 total_success=457 mem≈174.0MB
+2025-08-12 22:28:16,956 - INFO - Batch 11: size=50 mem≈174.0MB
+2025-08-12 22:28:45,461 - INFO - batch_stats processed=47 skipped=3 api_hits=50 sqlite_upserts=47 total_attempted=550 total_success=504
+2025-08-12 22:28:45,480 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:28:50,480 - INFO - Batch 12: size=50 mem≈174.0MB
+2025-08-12 22:29:19,579 - INFO - batch_stats processed=47 skipped=3 api_hits=50 sqlite_upserts=47 total_attempted=600 total_success=551
+2025-08-12 22:29:19,599 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:29:24,600 - INFO - Batch 13: size=50 mem≈174.0MB
+2025-08-12 22:29:53,405 - INFO - batch_stats processed=47 skipped=3 api_hits=50 sqlite_upserts=47 total_attempted=650 total_success=598
+2025-08-12 22:29:53,424 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:29:58,425 - INFO - Batch 14: size=50 mem≈174.0MB
+2025-08-12 22:30:26,300 - INFO - batch_stats processed=40 skipped=10 api_hits=50 sqlite_upserts=39 total_attempted=700 total_success=638
+2025-08-12 22:30:26,330 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:30:31,331 - INFO - Batch 15: size=50 mem≈174.0MB
+2025-08-12 22:31:01,053 - INFO - batch_stats processed=49 skipped=1 api_hits=50 sqlite_upserts=49 total_attempted=750 total_success=687
+2025-08-12 22:31:01,073 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:31:06,074 - INFO - Batch 16: size=50 mem≈174.0MB
+2025-08-12 22:31:34,933 - INFO - batch_stats processed=47 skipped=3 api_hits=50 sqlite_upserts=47 total_attempted=800 total_success=734
+2025-08-12 22:31:34,953 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:31:39,953 - INFO - Batch 17: size=50 mem≈174.0MB
+2025-08-12 22:32:08,809 - INFO - batch_stats processed=46 skipped=4 api_hits=50 sqlite_upserts=46 total_attempted=850 total_success=780
+2025-08-12 22:32:08,827 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:32:13,828 - INFO - Batch 18: size=50 mem≈174.0MB
+2025-08-12 22:32:42,254 - INFO - batch_stats processed=41 skipped=9 api_hits=50 sqlite_upserts=41 total_attempted=900 total_success=821
+2025-08-12 22:32:42,273 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:32:47,274 - INFO - Batch 19: size=50 mem≈174.0MB
+2025-08-12 22:33:16,799 - INFO - batch_stats processed=48 skipped=2 api_hits=50 sqlite_upserts=48 total_attempted=950 total_success=869
+2025-08-12 22:33:16,826 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:33:21,827 - INFO - Batch 20: size=50 mem≈174.0MB
+2025-08-12 22:33:49,925 - INFO - batch_stats processed=42 skipped=8 api_hits=50 sqlite_upserts=42 total_attempted=1000 total_success=911
+2025-08-12 22:33:49,943 - INFO - Sleeping 5s before next batch… mem≈174.0MB
+2025-08-12 22:33:54,944 - INFO - Summary: batches_done=20 total_attempted=1000 total_success=911 mem≈174.0MB
+2025-08-12 22:33:54,944 - INFO - Batch 21: size=50 mem≈174.0MB
