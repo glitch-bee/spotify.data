@@ -7,3 +7,5 @@ matplotlib
 seaborn
 streamlit
 altair
+duckdb
+psutil
