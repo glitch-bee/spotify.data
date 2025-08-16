@@ -38,7 +38,7 @@ spotify-data/
 │   └── enriched/                        # (symlinked under scripts/spotify_api/data)
 │       ├── ultimate_spotify_enriched_streaming_history.csv
 │       ├── spotify_api_metadata.csv                      # append-only API results
-│       ├── api_progress.sqlite                           # crash-safe progress
+│       ├── progress.sqlite                               # crash-safe progress
 │       ├── spotify_api_enriched_streaming_history.csv    # merged final (base ← meta)
 │       ├── spotify_api_enriched_streaming_history_songs.csv
 │       └── spotify_api_enriched_streaming_history_podcasts.csv
@@ -68,12 +68,13 @@ spotify-data/
 - Songs vs. podcasts split available for downstream analysis.
 - Spotify API enrichment runs in batches, appends to CSV, and records progress in SQLite for safe resume.
 
-Coverage snapshot (from last merge log):
+Coverage snapshot (Aug 15, 2025):
 - Base unique tracks: ~27,400
 - Kaggle-covered unique: ~6,069
-- API-covered unique: ~10,866
-- Total covered unique: ~16,935 (~61.8%)
-- Remaining unique for API: ~10,465
+- API-covered unique (deduped): ~20,777 (prev ~10,866; +~9,911 today)
+- Final merged rows: 138,762 (includes header)
+- Split outputs: songs 127,099 rows; podcasts 11,664 rows (each includes header)
+- Estimated remaining unique for API next pass: ~3,000 (start-of-run to_process was 12,896; ~9.9k covered this run)
 
 ### Available Metadata
 - **Audio Features**: Danceability, energy, valence, tempo, acousticness, instrumentalness, liveness, loudness, speechiness
@@ -154,7 +155,7 @@ Monitor and resume safely:
 ```bash
 tail -n 80 "$LOG"
 pgrep -af scripts.spotify_api.smart_metadata_enrichment
-sqlite3 scripts/spotify_api/data/enriched/api_progress.sqlite "SELECT COUNT(*) FROM progress WHERE meta_json IS NOT NULL;"
+sqlite3 scripts/spotify_api/data/enriched/progress.sqlite "SELECT COUNT(*) FROM progress WHERE meta_json IS NOT NULL;"
 ```
 
 Merge-only (low-memory, on-disk):
@@ -241,7 +242,7 @@ After processing, you'll have these datasets:
 scripts/spotify_api/data/enriched/
 ├── ultimate_spotify_enriched_streaming_history.csv
 ├── spotify_api_metadata.csv
-├── api_progress.sqlite
+├── progress.sqlite
 ├── spotify_api_enriched_streaming_history.csv
 ├── spotify_api_enriched_streaming_history_songs.csv
 └── spotify_api_enriched_streaming_history_podcasts.csv
