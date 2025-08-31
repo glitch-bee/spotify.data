@@ -20,32 +20,35 @@ GENRE_COL_CANDIDATES = ["genre", "genres"]
 JOIN_KEYS = ["master_metadata_track_name", "master_metadata_album_artist_name"]
 
 @st.cache_data(show_spinner=False)
-def load_data():
-    # Prefer final merged dataset
-    if FINAL_FILE.exists():
-        df = pd.read_csv(FINAL_FILE)
-    elif KAGGLE_FILE.exists() or API_FILE.exists():
-        # Fallback: best available enriched
-        base = pd.read_csv(CLEAN_FILE) if CLEAN_FILE.exists() else None
-        frames = []
-        if base is not None:
-            frames.append(base)
-        if KAGGLE_FILE.exists():
-            frames.append(pd.read_csv(KAGGLE_FILE))
-        if API_FILE.exists():
-            frames.append(pd.read_csv(API_FILE))
-        # Try to merge incrementally on JOIN_KEYS
-        df = frames[0]
-        for f in frames[1:]:
-            common_cols = [c for c in f.columns if c in JOIN_KEYS]
-            if set(common_cols) == set(JOIN_KEYS):
-                df = df.merge(f, on=JOIN_KEYS, how="left", suffixes=("", "_dup"))
-            else:
-                # If not mergeable, prefer the bigger table
-                if len(f) > len(df):
-                    df = f
-    else:
-        df = pd.read_csv(CLEAN_FILE)
+def load_data(source_path: Path):
+    # Read only columns needed for visuals to reduce memory
+    needed = set([
+        # time
+        "ts", "end_time", "timestamp", "year", "month", "day",
+        # play duration
+        "minutes_played", "ms_played",
+        # genre/artist/track
+        "genre", "genres", "master_metadata_album_artist_name", "artist_name",
+        "master_metadata_track_name", "track_name",
+        # media hints
+        "episode_name", "episode_show_name", "spotify_episode_uri", "spotify_track_uri", "uri",
+        # audio features
+        "energy", "valence", "danceability", "tempo", "acousticness",
+    ])
+
+    # Discover available columns first
+    header = pd.read_csv(source_path, nrows=0)
+    usecols = [c for c in header.columns if c in needed]
+
+    # Try to parse known datetime columns, we'll coerce later
+    parse_dates = [c for c in ["ts", "end_time", "timestamp"] if c in usecols]
+
+    df = pd.read_csv(
+        source_path,
+        usecols=usecols,
+        parse_dates=parse_dates or None,
+        low_memory=False,
+    )
 
     # Date column
     date_col = next((c for c in DATE_COL_CANDIDATES if c in df.columns), None)
@@ -104,6 +107,30 @@ def load_data():
     for col in ["energy","valence","danceability","tempo","acousticness"]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    # Media type (song/podcast) detection
+    media_candidates = ["media_type", "type", "content_type", "is_podcast"]
+    media_col = next((c for c in media_candidates if c in df.columns), None)
+    if media_col is not None:
+        if df[media_col].dropna().astype(str).isin(["True","False","0","1","true","false"]).any():
+            # boolean-style -> map to labels
+            val = df[media_col].astype(str).str.lower().isin(["true","1","yes"])  # podcast True/False
+            df["media"] = np.where(val, "podcast", "song")
+        else:
+            df["media"] = df[media_col].astype(str).str.lower()
+            df.loc[~df["media"].isin(["podcast","song"]), "media"] = "unknown"
+    else:
+        # Infer from episode/URI columns if present; default to song
+        episode_cols = [c for c in df.columns if "episode" in c.lower()]
+        uri_cols = [c for c in df.columns if "uri" in c.lower()]
+        looks_like_podcast = pd.Series(False, index=df.index)
+        if episode_cols:
+            for c in episode_cols:
+                looks_like_podcast = looks_like_podcast | df[c].notna()
+        if uri_cols:
+            for c in uri_cols:
+                looks_like_podcast = looks_like_podcast | df[c].astype(str).str.contains("spotify:episode:", na=False)
+        df["media"] = np.where(looks_like_podcast, "podcast", "song")
 
     return df
 
@@ -197,8 +224,27 @@ def main():
     st.set_page_config(page_title="Spotify Listening Dashboard", layout="wide")
     st.title("Spotify Listening Dashboard")
 
+    # Choose source (avoid heavy on-the-fly merges)
+    available = []
+    if API_FILE.exists():
+        available.append(("API-enriched streaming history", API_FILE))
+    if KAGGLE_FILE.exists():
+        available.append(("Kaggle-enriched streaming history", KAGGLE_FILE))
+    if CLEAN_FILE.exists():
+        available.append(("Cleaned base streaming history", CLEAN_FILE))
+
+    if not available:
+        st.error("No data files found under data/enriched/ or data/processed/.")
+        st.stop()
+
+    labels = [a[0] for a in available]
+    default_index = 0
+    st.sidebar.header("Data source")
+    choice = st.sidebar.selectbox("Select dataset", options=labels, index=default_index)
+    source_path = dict(available)[choice]
+
     with st.spinner("Loading data..."):
-        df = load_data()
+        df = load_data(source_path)
 
     # Sidebar filters
     st.sidebar.header("Filters")
@@ -207,6 +253,14 @@ def main():
     if isinstance(date_range, tuple):
         start, end = pd.to_datetime(date_range[0]), pd.to_datetime(date_range[1]) + pd.Timedelta(days=1)
         df = df[(df["date"] >= start) & (df["date"] < end)]
+
+    # Media type filter
+    media_options = ["All", "Songs", "Podcasts"]
+    media_choice = st.sidebar.radio("Media type", media_options, index=0)
+    if media_choice == "Songs":
+        df = df[df["media"] == "song"]
+    elif media_choice == "Podcasts":
+        df = df[df["media"] == "podcast"]
 
     # Genre filter
     genres = sorted([g for g in df["genre_std"].dropna().unique() if g and g != "nan"])[:2000]
